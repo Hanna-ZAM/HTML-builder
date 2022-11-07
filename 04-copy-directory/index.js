@@ -6,13 +6,14 @@ const fsPromises = fs.promises;
 let p='';
 let pCopy='';
 
-fsPromises.rmdir(path.join(__dirname, 'files-copy'), { recursive: true }).then(function() {
-  console.log('Directory deleted successfully');
-  copyFolder('files', 'files-copy', p, pCopy); 
-}).catch(function() {
-  console.log('err-delete folder');
-  });
-
+fs.rm (path.join(__dirname, 'files-copy'), { recursive: true }, (err) => {
+  if (err){
+    copyFolder('files', 'files-copy', p, pCopy); 
+  } else {
+    console.log('Directory deleted successfully');
+    copyFolder('files', 'files-copy', p, pCopy); 
+  }
+})
 
 async function copyFolder(folder, folderCopy, p, pCopy) {
   let folderNew= await fsPromises.mkdir(path.join(__dirname, pCopy, folderCopy), { recursive: true },).then(function() {

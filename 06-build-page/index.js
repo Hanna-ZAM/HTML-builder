@@ -5,21 +5,30 @@ const fsPromises = fs.promises;
 let p='';
 let pCopy='';
 
-fsPromises.rmdir(path.join(__dirname, 'project-dist'), { recursive: true }).then(function() {
-  console.log('Directory deleted successfully');
-  fsPromises.mkdir(path.join(__dirname, 'project-dist'), { recursive: true },).then(function() {
+fs.rm (path.join(__dirname, 'project-dist'), { recursive: true }, (err) => {
+  if (err) {
+    fsPromises.mkdir(path.join(__dirname, 'project-dist'), { recursive: true },).then(function() {
     console.log('Directory created successfully');
-  }).catch(function() {
+    }).catch(function() {
     console.log('failed to create directory');
-  });
-  pCopy=path.join(pCopy, 'project-dist');
-  copyFolder('assets', 'assets', p, pCopy); 
-  createStyle ();
-  buildHTML();
-}).catch(function() {
-  console.log('err-delete folder');
-  });
-
+    });
+    pCopy=path.join(pCopy, 'project-dist');
+    copyFolder('assets', 'assets', p, pCopy); 
+    createStyle ();
+    buildHTML();
+  } else {
+    console.log('Directory deleted successfully');
+    fsPromises.mkdir(path.join(__dirname, 'project-dist'), { recursive: true },).then(function() {
+      console.log('Directory created successfully');
+    }).catch(function() {
+      console.log('failed to create directory');
+    });
+    pCopy=path.join(pCopy, 'project-dist');
+    copyFolder('assets', 'assets', p, pCopy); 
+    createStyle ();
+    buildHTML();
+  }
+})
 
 async function copyFolder(folder, folderCopy, p, pCopy) {
   let folderNew= await fsPromises.mkdir(path.join(__dirname, pCopy, folderCopy), { recursive: true },).then(function() {
